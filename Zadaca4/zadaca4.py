@@ -47,35 +47,99 @@ asyncio.run(main())
 #od ključeva korisnicko_ime , email i lozinka . Unutar korutine simulirajte provjeru korisničkog
 #imena na način da ćete provjeriti nalaze li se par korisnicko_ime i email u bazi korisnika. Ova
 #provjera traje 3 sekunde.
-
+'''
 import asyncio
 
-async def autorizacija():
-    baza_lozinka = [
-    {'korisnicko_ime': 'mirko123', 'lozinka': 'lozinka123'},
-    {'korisnicko_ime': 'ana_anic', 'lozinka': 'super_teska_lozinka'},
-    {'korisnicko_ime': 'maja_0x', 'email': 's324SDFfdsj234'},
-    {'korisnicko_ime': 'zdeslav032', 'email': 'deso123'}
-    ]
-    print("Autorizacija korisnika...")
-    await asyncio.sleep(2)
-    
-
-
-async def autentifikacija():
-    baza_korisnika = [
+baza_korisnika = [
     {'korisnicko_ime': 'mirko123', 'email': 'mirko123@gmail.com'},
     {'korisnicko_ime': 'ana_anic', 'email': 'aanic@gmail.com'},
     {'korisnicko_ime': 'maja_0x', 'email': 'majaaaaa@gmail.com'},
     {'korisnicko_ime': 'zdeslav032', 'email': 'deso032@gmail.com'}
-    ]
-    print("Provjera podataka...")
+]
+
+baza_lozinka = [
+    {'korisnicko_ime': 'mirko123', 'lozinka': 'lozinka123'},
+    {'korisnicko_ime': 'ana_anic', 'lozinka': 'super_teska_lozinka'},
+    {'korisnicko_ime': 'maja_0x', 'lozinka': 's324SDFfdsj234'},
+    {'korisnicko_ime': 'zdeslav032', 'lozinka': 'deso123'}
+]
+
+async def autorizacija(korisnik, unesena_lozinka):
+    print("Autorizacija korisnika...")
+    await asyncio.sleep(2)
+    for entry in baza_lozinka:
+        if entry['korisnicko_ime'] == korisnik['korisnicko_ime']:
+            if entry['lozinka'] == unesena_lozinka:
+                return "Autorizacija uspješna"
+            else:
+                return "Autorizacija neuspješna"
+
+async def autentifikacija(korisnik):
+    print("Autentifikacija korisnika...")
     await asyncio.sleep(3)
-    for korisnik in baza_korisnika:
-        if korisnik["korisnicko_ime"] and korisnik["email"] in baza_korisnika:
-            return "Korisnik je u bazi"
-        else:
-            print(f'Korisnik {korisnik} nije pronađen')
+    for entry in baza_korisnika:
+        if entry['korisnicko_ime'] == korisnik['korisnicko_ime'] and entry['email'] == korisnik['email']:
+            rezultat = await autorizacija(entry, korisnik['lozinka'])
+            return rezultat
+    return f"Korisnik nije pronađen"
 
+async def main():
+    korisnik = {
+        "korisnicko_ime": "mirko123",
+        "email": "mirko123@gmail.com",
+        "lozinka": "lozinka13"
+    }
+    rezultat = await autentifikacija(korisnik)
+    print(rezultat)
 
-asyncio.run(autentifikacija())
+asyncio.run(main())
+'''
+
+#4
+'''
+import asyncio
+import random
+
+async def provjeri_parnost(broj):
+    await asyncio.sleep(2)
+    if broj % 2 == 0:
+        return f"Broj {broj} je paran"
+    else:
+        return f"Broj {broj} je neparan"
+
+async def main():
+    brojevi = [random.randint(1, 100) for i in range(10)]
+    zadaci = [provjeri_parnost(broj) for broj in brojevi]
+    rezultati = await asyncio.gather(*zadaci)
+
+    for rezultat in rezultati:
+        print(rezultat)
+
+asyncio.run(main())
+'''
+
+import asyncio
+
+async def secure_data(osjetljivi_podaci):
+    await asyncio.sleep(3)
+    enkriptirani_podaci = {
+        'prezime': osjetljivi_podaci['prezime'],
+        'broj_kartice': hash(osjetljivi_podaci['broj_kartice']),
+        'CVV': hash(osjetljivi_podaci['CVV'])
+    }
+    return enkriptirani_podaci
+
+async def main():
+    osjetljivi_podaci_lista = [
+        {'prezime': 'Ivić', 'broj_kartice': '1212345678', 'CVV': '123'},
+        {'prezime': 'Marković', 'broj_kartice': '87687654321', 'CVV': '456'},
+        {'prezime': 'Anić', 'broj_kartice': '111122223334', 'CVV': '789'}
+    ]
+
+    zadaci = [secure_data(podaci) for podaci in osjetljivi_podaci_lista]
+    enkriptirani_podaci = await asyncio.gather(*zadaci)
+
+    for podaci in enkriptirani_podaci:
+        print(podaci)
+
+asyncio.run(main())
