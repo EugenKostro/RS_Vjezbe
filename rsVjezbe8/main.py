@@ -11,16 +11,20 @@ filmovi = [
     {"id": 4, "naziv": "The Dark Knight", "genre": "akcija", "godina": 2008}
 ]
 
-@app.get("/filmovi/{film_id}")
-def get_filmovi(film_id: int):
-    trazeni_film = next((film for film in filmovi if film["id"] == film_id), None)
+@app.get("/filmovi", response_model=list[Film])
+def get_filmovi():
+    return filmovi
 
-    return {"film_id": trazeni_film}
+@app.get("/filmovi/{film_id}", response_model=Film)
+def get_film_id(film_id: int):
+    for film in filmovi:
+        if film["id"] == film_id:
+            return film
+    return {"id": 0, "naziv": "", "genre": "", "godina": 0}
 
-@app.post("/filmovi")
+@app.post("/filmovi", response_model=Film)
 def dodaj_film(film: CreateFilm):
     new_id = len(filmovi) + 1
     film_sa_id = {"id": new_id, **film.dict()}
     filmovi.append(film_sa_id)
     return film_sa_id
-
