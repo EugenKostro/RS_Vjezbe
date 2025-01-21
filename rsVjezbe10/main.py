@@ -1,13 +1,8 @@
+from fastapi import FastAPI
 from models import Knjiga, Izdavac
 
-izdavac1 = Izdavac(naziv="BookRecords", adresa="Ulica Mate Parlova 3, Zagreb")
+app = FastAPI()
 
-knjiga1 = Knjiga(
-    naslov="Šegrt Hlapić",
-    ime_autora="Ivana",
-    prezime_autora="Brlić Mažuranić",
-    broj_stranica=250,
-    izdavac=izdavac1
-)
-
-print(knjiga1)
+@app.post("/knjige")
+def kreiraj_knjigu(knjiga: Knjiga):
+    return{"poruka": "Knjiga uspješno dodana", "podaci": knjiga}
